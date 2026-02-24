@@ -1,0 +1,7 @@
+Contact: mailto:admin@dmart.com
+Expires: 2026-12-31T23:59:59.000Z
+Encryption: https://dmart.com/pgp-key.txt
+Acknowledgments: https://dmart.com/security-acknowledgments.txt
+Preferred-Languages: en, hi
+Canonical: https://dmart.com/.well-known/security.txt
+Policy: https://dmart.com/security-policy.html

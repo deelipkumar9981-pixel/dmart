@@ -1,19 +1,21 @@
+import postgres from 'postgres';
 import dotenv from 'dotenv';
-import sql from './db.js';
 
 dotenv.config();
 
-console.log('DATABASE_URL:', process.env.DATABASE_URL);
+const sql = postgres('postgresql://postgres.vfbckfkwjonijelubelq:BtPBRkJis8txYjey@aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres', {
+  ssl: 'require'
+});
 
 async function testConnection() {
   try {
+    console.log('Testing database connection...');
     const result = await sql`SELECT NOW()`;
-    console.log('✅ Database connected successfully!');
-    console.log('📅 Server time:', result[0].now);
+    console.log('✓ Connection successful!');
+    console.log('Server time:', result[0].now);
     await sql.end();
-    process.exit(0);
   } catch (error) {
-    console.error('❌ Database connection failed:', error);
+    console.error('✗ Connection failed:', error.message);
     process.exit(1);
   }
 }
